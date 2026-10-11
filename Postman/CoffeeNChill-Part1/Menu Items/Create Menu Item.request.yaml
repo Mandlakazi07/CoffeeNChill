@@ -1,0 +1,45 @@
+$kind: http-request
+url: "{{baseUrl}}/api/menu"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"category\": \"Hot Drinks\",\r
+
+    \    \"id\": \"COF-001\",\r
+
+    \    \"name\": \"Cappuccino\",\r
+
+    \    \"description\": \"Espresso with steamed milk and foam\",\r
+
+    \    \"price\": 45.00,\r
+
+    \    \"isAvailable\": true\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is successful\", function () {\r
+
+      \    pm.expect([200, 201]).to.include(pm.response.code);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response is JSON\", function () {\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response time is below 5 seconds\", function () {\r
+
+      \    pm.expect(pm.response.responseTime).to.be.below(5000);\r
+
+      });"
+    language: text/javascript
+order: 1000

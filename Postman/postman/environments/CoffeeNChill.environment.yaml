@@ -1,0 +1,14 @@
+name: CoffeeNChill
+values:
+  - key: baseUrl
+    value: 'http://127.0.0.1:18080'
+    enabled: true
+    type: default
+  - key: orderId
+    value: 'ORD-1001'
+    enabled: true
+    type: default
+  - key: customerName
+    value: 'Sena Ndlovu'
+    enabled: true
+    type: default

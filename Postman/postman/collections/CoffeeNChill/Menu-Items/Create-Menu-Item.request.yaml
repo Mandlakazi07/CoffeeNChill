@@ -1,0 +1,34 @@
+$kind: http-request
+name: Create Menu Item
+method: POST
+url: '{{baseUrl}}/api/menu'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+        "category": "Hot Drinks",
+        "id": "COF-001",
+        "name": "Cappuccino",
+        "description": "Espresso with steamed milk and foam",
+        "price": 45.00,
+        "isAvailable": true
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is successful", function () {
+          pm.expect([200, 201]).to.include(pm.response.code);
+      });
+
+      pm.test("Response is JSON", function () {
+          pm.response.to.be.json;
+      });
+
+      pm.test("Response time is below 5 seconds", function () {
+          pm.expect(pm.response.responseTime).to.be.below(5000);
+      });

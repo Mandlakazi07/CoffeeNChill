@@ -1,0 +1,9 @@
+$kind: collection
+name: CoffeeNChill
+variables:
+  - key: baseUrl
+    value: ''
+  - key: orderId
+    value: ''
+  - key: customerName
+    value: ''

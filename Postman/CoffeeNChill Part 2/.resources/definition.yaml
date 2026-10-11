@@ -1,0 +1,2 @@
+$kind: collection
+description: Postman requests for testing asynchronous CoffeeNChill order processing with Azure Queue Storage and Azure Table Storage.

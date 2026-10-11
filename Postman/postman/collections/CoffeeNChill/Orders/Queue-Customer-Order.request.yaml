@@ -1,0 +1,22 @@
+$kind: http-request
+name: Queue Customer Order
+method: POST
+url: '{{baseUrl}}/api/orders/queue'
+order: 1000
+description: Validates a customer order and submits it to the order-processing-queue.
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "orderId": "{{orderId}}",
+      "customerName": "{{customerName}}",
+      "selectedItemSkus": [
+        "COFFEE-001",
+        "CAKE-002"
+      ],
+      "totalPrice": 129.90,
+      "orderTimestamp": "2026-10-11T11:00:00Z"
+    }

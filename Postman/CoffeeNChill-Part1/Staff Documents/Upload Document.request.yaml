@@ -1,0 +1,34 @@
+$kind: http-request
+url: "{{baseUrl}}/api/documents/upload"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: file
+      key: file
+      src: []
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is successful\", function () {\r
+
+      \    pm.expect([200, 201]).to.include(pm.response.code);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response is JSON\", function () {\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response time is below 10 seconds\", function () {\r
+
+      \    pm.expect(pm.response.responseTime).to.be.below(10000);\r
+
+      });"
+    language: text/javascript
+order: 1000

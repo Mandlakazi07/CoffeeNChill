@@ -1,0 +1,36 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:18080/api/orders/ORD-5001/status
+method: PUT
+body:
+  type: json
+  content: "{\r\n  \"status\": \"Preparing\"\r\n}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Order ID is correct\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \    pm.expect(response.orderId).to.eql(\"ORD-5001\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Status changed to Preparing\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \    pm.expect(response.status).to.eql(\"Preparing\");\r
+
+      });"
+    language: text/javascript
+order: 5000

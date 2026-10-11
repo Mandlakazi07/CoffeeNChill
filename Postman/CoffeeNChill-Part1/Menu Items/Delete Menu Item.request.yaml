@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/api/menu/Hot%20Drinks/COF-001"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is successful\", function () {\r
+
+      \    pm.expect([200, 204]).to.include(pm.response.code);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response time is below 5 seconds\", function () {\r
+
+      \    pm.expect(pm.response.responseTime).to.be.below(5000);\r
+
+      });"
+    language: text/javascript
+order: 5000

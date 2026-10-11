@@ -1,0 +1,20 @@
+$kind: http-request
+name: List Documents
+method: GET
+url: '{{baseUrl}}/api/documents'
+order: 2000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Content-Type header exists", function () {
+          pm.expect(pm.response.headers.has("Content-Type")).to.be.true;
+      });
+
+      pm.test("Downloaded file is not empty", function () {
+          pm.expect(pm.response.size().body).to.be.above(0);
+      });

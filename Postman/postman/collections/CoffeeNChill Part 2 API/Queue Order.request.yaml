@@ -1,0 +1,26 @@
+$kind: http-request
+description: ""
+url: http://127.0.0.1:18080/api/orders/queue
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"orderId\": \"ORD-4002\",\r
+
+    \  \"customerName\": \"Sena Ndlovu\",\r
+
+    \  \"selectedItemSkus\": [\r
+
+    \    \"COFFEE-001\",\r
+
+    \    \"CAKE-002\"\r
+
+    \  ],\r
+
+    \  \"totalPrice\": 129.90,\r
+
+    \  \"orderTimestamp\": \"2026-10-11T12:20:00Z\"\r
+
+    }"
+order: 1000

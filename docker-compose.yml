@@ -1,0 +1,43 @@
+services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: coffeenchill-part2-azurite
+    command: >
+      azurite
+      --skipApiVersionCheck
+      --blobHost 0.0.0.0
+      --queueHost 0.0.0.0
+      --tableHost 0.0.0.0
+      --location /data
+      --debug /data/debug.log
+    ports:
+      - "127.0.0.1:11000:10000"
+      - "127.0.0.1:11001:10001"
+      - "127.0.0.1:11002:10002"
+    volumes:
+      - coffeenchill-part2-azurite-data:/data
+    restart: unless-stopped
+    networks:
+      - coffeenchill-part2-network
+
+  functions:
+    image: senandlovu/coffeenchill-functions:part2
+    container_name: coffeenchill-part2-functions
+    environment:
+      FUNCTIONS_WORKER_RUNTIME: "dotnet-isolated"
+      AzureWebJobsSecretStorageType: "files"
+      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
+    ports:
+      - "127.0.0.1:18080:80"
+    depends_on:
+      - azurite
+    restart: unless-stopped
+    networks:
+      - coffeenchill-part2-network
+
+volumes:
+  coffeenchill-part2-azurite-data:
+
+networks:
+  coffeenchill-part2-network:
+    driver: bridge

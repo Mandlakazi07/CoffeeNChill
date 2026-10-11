@@ -1,0 +1,13 @@
+# Use this workspace to collaborate
+workspace:
+  id: e6b23783-d20d-468f-85be-8d1339f857c4
+
+localResources:
+  collections:
+    - ../CoffeeNChill-Part2.postman_collection.json
+    - ../CoffeeNChill-Part1
+    - ../CoffeeNChill Part 2
+  environments:
+    - ../CoffeeNChill-Local.postman_environment.json
+    - ../CoffeeNChill-Local.environment.yaml
+    - ../CoffeeNChill Part 2 - Docker.environment.yaml

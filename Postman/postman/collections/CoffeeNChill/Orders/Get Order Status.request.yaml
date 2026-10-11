@@ -1,0 +1,32 @@
+$kind: http-request
+url: http://127.0.0.1:18080/api/orders/ORD-5001
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response contains the correct order ID\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \    pm.expect(response.orderId).to.eql(\"ORD-5001\");\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response contains an order status\", function () {\r
+
+      \    const response = pm.response.json();\r
+
+      \    pm.expect(response.status).to.be.a(\"string\");\r
+
+      });"
+    language: text/javascript
+order: 3000

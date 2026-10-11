@@ -1,0 +1,8 @@
+name: CoffeeNChill Part 2 - Docker
+values:
+  - key: baseUrl
+    value: 'http://127.0.0.1:18080'
+  - key: orderId
+    value: ORD-1001
+  - key: customerName
+    value: Sena Ndlovu

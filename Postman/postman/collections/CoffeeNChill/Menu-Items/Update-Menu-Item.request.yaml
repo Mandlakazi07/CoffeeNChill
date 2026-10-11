@@ -1,0 +1,28 @@
+$kind: http-request
+name: Update Menu Item
+method: PUT
+url: '{{baseUrl}}/api/menu/Hot%20Drinks/COF-001'
+order: 4000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Cappuccino",
+      "description": "Espresso with steamed milk and foam",
+      "price": 50.00,
+      "isAvailable": false
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Status is successful", function () {
+          pm.expect([200, 204]).to.include(pm.response.code);
+      });
+
+      pm.test("Response time is below 5 seconds", function () {
+          pm.expect(pm.response.responseTime).to.be.below(5000);
+      });

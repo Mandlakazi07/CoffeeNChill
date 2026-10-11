@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/documents/download/staff-handbook.pdf"
+method: GET
+order: 3000
