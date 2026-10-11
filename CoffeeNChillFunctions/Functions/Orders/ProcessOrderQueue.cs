@@ -8,6 +8,9 @@ namespace CoffeeNChillFunctions.Functions.Orders
 {
     public sealed class ProcessOrderQueue
     {
+        private const int MaxDequeueCount = 3;
+        private const string PoisonQueueName = "order-processing-queue-poison";
+
         private readonly OrderTableService _orderTableService;
         private readonly ILogger<ProcessOrderQueue> _logger;
 
@@ -27,67 +30,127 @@ namespace CoffeeNChillFunctions.Functions.Orders
             string queueMessage,
             FunctionContext context)
         {
-            OrderQueueMessage? order =
-                JsonSerializer.Deserialize<OrderQueueMessage>(
-                    queueMessage,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+            string? orderId = null;
 
-            if (order == null ||
-                string.IsNullOrWhiteSpace(order.OrderId))
+            try
             {
-                throw new InvalidOperationException(
-                    "The queue message did not contain a valid order.");
-            }
+                if (string.IsNullOrWhiteSpace(queueMessage))
+                {
+                    throw new InvalidOperationException(
+                        "The queue message was empty.");
+                }
 
-            _logger.LogInformation(
-                "Processing queued order {OrderId}.",
-                order.OrderId);
+                OrderQueueMessage? order =
+                    JsonSerializer.Deserialize<OrderQueueMessage>(
+                        queueMessage,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
 
-            OrderEntity? existingOrder =
-                await _orderTableService.GetOrderAsync(
-                    order.OrderId,
-                    context.CancellationToken);
+                if (order == null || string.IsNullOrWhiteSpace(order.OrderId))
+                {
+                    throw new InvalidOperationException(
+                        "The queue message did not contain a valid order ID.");
+                }
 
-            if (existingOrder == null)
-            {
-                await _orderTableService.CreateOrderAsync(
-                    order,
-                    context.CancellationToken);
+                orderId = order.OrderId;
 
                 _logger.LogInformation(
-                    "Order {OrderId} stored with Received status.",
+                    "Processing queued order {OrderId}.",
                     order.OrderId);
+
+                OrderEntity? existingOrder =
+                    await _orderTableService.GetOrderAsync(
+                        order.OrderId,
+                        context.CancellationToken);
+
+                string currentStatus;
+
+                if (existingOrder == null)
+                {
+                    await _orderTableService.CreateOrderAsync(
+                        order,
+                        context.CancellationToken);
+
+                    currentStatus = OrderStatus.Received;
+                    _logger.LogInformation(
+                        "Order {OrderId} stored with Received status.",
+                        order.OrderId);
+                }
+                else
+                {
+                    currentStatus = existingOrder.Status;
+
+                    if (currentStatus == OrderStatus.Collected)
+                    {
+                        _logger.LogWarning(
+                            "Ignoring duplicate queue message for already collected order {OrderId}.",
+                            order.OrderId);
+                        return;
+                    }
+                }
+
+                // Resume from the last persisted status rather than moving an
+                // order backwards if a message is delivered more than once.
+                if (currentStatus == OrderStatus.Received)
+                {
+                    await _orderTableService.UpdateStatusAsync(
+                        order.OrderId,
+                        OrderStatus.Preparing,
+                        context.CancellationToken);
+
+                    currentStatus = OrderStatus.Preparing;
+                    _logger.LogInformation(
+                        "Order {OrderId} is being prepared.",
+                        order.OrderId);
+                }
+
+                if (currentStatus == OrderStatus.Preparing)
+                {
+                    await _orderTableService.UpdateStatusAsync(
+                        order.OrderId,
+                        OrderStatus.Ready,
+                        context.CancellationToken);
+
+                    currentStatus = OrderStatus.Ready;
+                    _logger.LogInformation(
+                        "Order {OrderId} is ready for collection.",
+                        order.OrderId);
+                }
+
+                if (currentStatus == OrderStatus.Ready)
+                {
+                    await _orderTableService.UpdateStatusAsync(
+                        order.OrderId,
+                        OrderStatus.Collected,
+                        context.CancellationToken);
+
+                    currentStatus = OrderStatus.Collected;
+                    _logger.LogInformation(
+                        "Order {OrderId} has been collected.",
+                        order.OrderId);
+                }
+
+                if (currentStatus != OrderStatus.Collected)
+                {
+                    throw new InvalidOperationException(
+                        $"Order '{order.OrderId}' has an unsupported status '{currentStatus}'.");
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to process queued order {OrderId}. The Functions runtime will retry it; after {MaxDequeueCount} failed attempts, the message should be moved to {PoisonQueueName}.",
+                    orderId ?? "(unknown)",
+                    MaxDequeueCount,
+                    PoisonQueueName);
 
-            await _orderTableService.UpdateStatusAsync(
-                order.OrderId,
-                OrderStatus.Preparing,
-                context.CancellationToken);
-
-            _logger.LogInformation(
-                "Order {OrderId} is being prepared.",
-                order.OrderId);
-
-            await _orderTableService.UpdateStatusAsync(
-                order.OrderId,
-                OrderStatus.Ready,
-                context.CancellationToken);
-
-            _logger.LogInformation(
-                "Order {OrderId} is ready for collection.",
-                order.OrderId);
-
-            await _orderTableService.UpdateStatusAsync(
-                order.OrderId,
-                OrderStatus.Collected,
-                context.CancellationToken);
-
-            _logger.LogInformation(
-                "Order {OrderId} has been collected.",
-                order.OrderId);
+                // Do not swallow this exception. The queue trigger must see a
+                // failed invocation so it can retry and eventually poison it.
+                throw;
+            }
         }
     }
 }
