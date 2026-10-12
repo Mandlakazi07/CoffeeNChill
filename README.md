@@ -164,3 +164,7 @@ The individual work on this combined repository should be described accurately a
 - Microsoft. (n.d.) *Install and run the Azurite emulator for Azure Storage*. Available at: <https://learn.microsoft.com/en-us/azure/storage/common/storage-install-azurite> (Accessed: 11 October 2026).
 
 Use the IIE Harvard Anglia format required by the module and include additional references for any external code actually copied or adapted. Only list sources that were genuinely consulted; update author/date/access details as needed before submission.
+
+## Code attribution and technical references
+
+External source attribution, IIE Harvard Anglia references and the AI-use disclosure are documented in [docs/CODE_ATTRIBUTION.md](docs/CODE_ATTRIBUTION.md).

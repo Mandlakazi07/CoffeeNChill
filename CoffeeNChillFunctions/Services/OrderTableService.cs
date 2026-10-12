@@ -1,3 +1,9 @@
+/*
+ * CODE ATTRIBUTION (IIE Harvard Anglia)
+ * Table access uses the Azure.Data.Tables client API documented by Microsoft (Microsoft, n.d.-d).
+ * CoffeeNChill entity keys, status rules and date-based query behaviour are project-specific; source lineage and AI-assisted revisions are disclosed in docs/CODE_ATTRIBUTION.md (EMKNDN, 2026; OpenAI, 2026).
+ */
+
 using System.Text.Json;
 using Azure;
 using Azure.Data.Tables;

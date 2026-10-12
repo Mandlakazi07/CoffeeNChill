@@ -1,3 +1,9 @@
+/*
+ * CODE ATTRIBUTION (IIE Harvard Anglia)
+ * The Queue Storage producer/binding pattern follows Microsoft's published Azure Queue Storage guidance (Microsoft, n.d.-a; Microsoft, n.d.-b).
+ * CoffeeNChill request validation, payload fields and response behaviour are project-specific adaptations. Shared-baseline and AI-assistance disclosures are in docs/CODE_ATTRIBUTION.md (EMKNDN, 2026; OpenAI, 2026).
+ */
+
 using System.Net;
 using System.Globalization;
 using System.Text.Json;

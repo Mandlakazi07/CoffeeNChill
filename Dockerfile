@@ -1,4 +1,8 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+# CODE ATTRIBUTION (IIE Harvard Anglia)
+# The separate SDK-build and Functions-runtime stages follow Docker's multi-stage-build pattern (Docker, n.d.-d); the .NET isolated worker model is documented by Microsoft (Microsoft, n.d.-c).
+# The specific base images and publish paths are configured for this CoffeeNChill project. See docs/CODE_ATTRIBUTION.md.
+
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 WORKDIR /src
 

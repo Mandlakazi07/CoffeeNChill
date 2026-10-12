@@ -1,3 +1,9 @@
+/*
+ * CODE ATTRIBUTION (IIE Harvard Anglia)
+ * Queue-trigger execution, retry timing and poison-message behaviour follow Microsoft Azure Functions guidance (Microsoft, n.d.-a; Microsoft, n.d.-b).
+ * The CoffeeNChill lifecycle and idempotency logic are project-specific adaptations; see docs/CODE_ATTRIBUTION.md for the shared baseline, technical references and AI-use disclosure (EMKNDN, 2026; OpenAI, 2026).
+ */
+
 using System.Text.Json;
 using CoffeeNChillFunctions.Models;
 using CoffeeNChillFunctions.Services;

@@ -1,3 +1,7 @@
+# CODE ATTRIBUTION (IIE Harvard Anglia)
+# Compose service, network and named-volume concepts follow Docker's documentation (Docker, n.d.-a; Docker, n.d.-b; Docker, n.d.-c).
+# The specific services, image references, ports and storage connection are CoffeeNChill project configuration. See docs/CODE_ATTRIBUTION.md.
+
 services:
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:latest

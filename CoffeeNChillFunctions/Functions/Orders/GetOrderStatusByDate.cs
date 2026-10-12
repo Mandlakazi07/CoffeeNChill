@@ -1,3 +1,9 @@
+/*
+ * CODE ATTRIBUTION (IIE Harvard Anglia)
+ * These date-based routes implement the CoffeeNChill assessment contract using the project's Orders table service; Azure.Data.Tables API behaviour is documented by Microsoft (Microsoft, n.d.-d).
+ * See docs/CODE_ATTRIBUTION.md for project lineage, technical references and AI-use disclosure (EMKNDN, 2026; OpenAI, 2026).
+ */
+
 using System.Globalization;
 using System.Net;
 using System.Text.Json;
