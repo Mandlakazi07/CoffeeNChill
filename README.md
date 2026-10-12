@@ -5,9 +5,9 @@
 
 | Field | Details |
 |---|---|
-| Submission type | Individual submission combining Part 1 and Part 2 |
-| Student name | **Mandlakazi Fezile Sibiya** |
-| Student number | **ST10473547** |
+| Submission type | Group Assignment - Part 1 and Part 2 |
+| Student name | **Mandlakazi Fezile Sibiya** | **Jarrad Rickson** | **Tyrone Seamark** |
+| Student number | **ST10473547** | **ST10478657** | **ST10470368** |
 | GitHub repository | [Mandlakazi07/CoffeeNChill](https://github.com/Mandlakazi07/CoffeeNChill) |
 | Module | CLDV6212 — Cloud Development |
 | Demonstration video | **https://youtu.be/r_DwcSN_6zo** |
