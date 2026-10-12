@@ -136,6 +136,17 @@ docker compose down
 
 If a current source image is published to Docker Hub, record the exact tag and verify that it is publicly pullable. Merely referencing a Docker Hub image in Compose does not publish the source that is in this repository.
 
+## Docker, setup and troubleshooting
+Focus: helping an examiner run the project
+This person can independently prepare operational documentation:
+1. Write a local setup guide covering prerequisites and how to start the application with Docker Compose.
+2. Explain the Functions and Azurite services, ports, network and persistent volume using the existing Compose configuration.
+3. Create a troubleshooting guide for container startup, connection and queue-processing problems.
+4. Document how to inspect application logs safely.
+5. Create a repository guide explaining the purpose of the main folders and files.
+6. Prepare a final deployment and submission checklist covering Docker Hub tags, GitHub, Postman and the demonstration video.
+Suggested commit style: docs: add Docker Compose setup and troubleshooting guide
+
 ## Postman
 
 The repository includes a JSON collection at the root (`CoffeeNChill-Part1.postman_collection.json`) and additional Postman exports under `Postman/`. Import the collection that matches the current endpoint routes and set its base URL to `http://127.0.0.1:18080` when using the provided Compose port mapping.
