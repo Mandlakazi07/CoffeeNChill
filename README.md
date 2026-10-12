@@ -11,7 +11,7 @@
 | Student number | **ST10473547** |
 | GitHub repository | [Mandlakazi07/CoffeeNChill](https://github.com/Mandlakazi07/CoffeeNChill) |
 | Module | CLDV6212 — Cloud Development |
-| Demonstration video | **[Insert unlisted YouTube URL after recording]** |
+| Demonstration video | **https://youtu.be/r_DwcSN_6zo** |
 
 ## Project overview
 
