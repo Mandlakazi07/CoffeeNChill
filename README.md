@@ -1,16 +1,23 @@
-[# CoffeeNChill — Combined CLDV6212 Part 1 and Part 2 Submission
-
+# CoffeeNChill — Combined CLDV6212 Part 1 and Part 2 Submission
 
 ## Student and repository
 
+### Students
+
+| Student name | Student number |
+|---|---|
+| **Mandlakazi Fezile Sibiya** | **ST10473547** |
+| **Jarrad Rickson** | **ST10478657** |
+| **Tyrone Seamark** | **ST10470368** |
+
+### Repository details
+
 | Field | Details |
 |---|---|
-| Submission type | Group Assignment - Part 1 and Part 2 |
-| Student name | **Mandlakazi Fezile Sibiya** | **Jarrad Rickson** | **Tyrone Seamark** |
-| Student number | **ST10473547** | **ST10478657** | **ST10470368** |
+| Submission type | Group Assignment — Part 1 and Part 2 |
 | GitHub repository | [Mandlakazi07/CoffeeNChill](https://github.com/Mandlakazi07/CoffeeNChill) |
 | Module | CLDV6212 — Cloud Development |
-| Demonstration video | **https://youtu.be/r_DwcSN_6zo** |
+| Demonstration video | [https://youtu.be/r_DwcSN_6zo](https://youtu.be/r_DwcSN_6zo) |
 
 ## Project overview
 
@@ -137,15 +144,19 @@ docker compose down
 If a current source image is published to Docker Hub, record the exact tag and verify that it is publicly pullable. Merely referencing a Docker Hub image in Compose does not publish the source that is in this repository.
 
 ## Docker, setup and troubleshooting
-Focus: helping an examiner run the project
+
+**Focus:** helping an examiner run the project.
+
 This person can independently prepare operational documentation:
+
 1. Write a local setup guide covering prerequisites and how to start the application with Docker Compose.
 2. Explain the Functions and Azurite services, ports, network and persistent volume using the existing Compose configuration.
 3. Create a troubleshooting guide for container startup, connection and queue-processing problems.
 4. Document how to inspect application logs safely.
 5. Create a repository guide explaining the purpose of the main folders and files.
 6. Prepare a final deployment and submission checklist covering Docker Hub tags, GitHub, Postman and the demonstration video.
-Suggested commit style: docs: add Docker Compose setup and troubleshooting guide
+
+**Suggested commit style:** `docs: add Docker Compose setup and troubleshooting guide`
 
 ## Postman
 
@@ -165,7 +176,7 @@ The individual work on this combined repository should be described accurately a
 
 **An AI assistant (ChatGPT by OpenAI) was used during preparation to inspect the supplied source snapshot, compare files against the stated requirements, suggest and prepare code/documentation revisions, draft this README and a demonstration script, and provide Git/PowerShell troubleshooting steps. AI assistance contributed to the review and revision process; the submitted code must not be described as wholly unaided original work.**
 
-**I,the student am responsible for understanding the submitted implementation, verifying all suggested changes, conducting the required runtime tests, and ensuring this disclosure and any code attribution meet the institution's current rules. At the time of this document revision, the available local evidence shows a successful .NET build, but not a successful end-to-end runtime test. The unresolved Azure File Share gap is called out above rather than being presented as complete.**
+**I, the student, am responsible for understanding the submitted implementation, verifying all suggested changes, conducting the required runtime tests, and ensuring this disclosure and any code attribution meet the institution's current rules. At the time of this document revision, the available local evidence shows a successful .NET build, but not a successful end-to-end runtime test. The unresolved Azure File Share gap is called out above rather than being presented as complete.**
 
 ## References and attribution
 
@@ -177,4 +188,4 @@ Use the IIE Harvard Anglia format required by the module and include additional 
 
 ## Code attribution and technical references
 
-External sourc](https://github.com/Mandlakazi07/CoffeeNChill.git)e attribution, IIE Harvard Anglia references and the AI-use disclosure are documented in [docs/CODE_ATTRIBUTION.md](docs/CODE_ATTRIBUTION.md).
+External source attribution, IIE Harvard Anglia references and the AI-use disclosure are documented in [`docs/CODE_ATTRIBUTION.md`](docs/CODE_ATTRIBUTION.md).
