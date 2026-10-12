@@ -1,4 +1,5 @@
 using System.Net;
+using System.Globalization;
 using System.Text.Json;
 using CoffeeNChillFunctions.DTOs;
 using CoffeeNChillFunctions.Models;
@@ -90,13 +91,15 @@ namespace CoffeeNChillFunctions.Functions.Orders
                     "Order {OrderId} was added to the processing queue.",
                     queueMessage.OrderId);
 
+                string orderDate = queueMessage.OrderTimestamp.UtcDateTime
+                    .ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
                 QueueOrderResponse responseBody = new()
                 {
                     OrderId = queueMessage.OrderId,
                     Status = OrderStatus.Queued,
-                    OrderDate = queueMessage.OrderTimestamp
-                        .ToString("O"),
-                    StatusUrl = $"/api/orders/{queueMessage.OrderId}"
+                    OrderDate = orderDate,
+                    StatusUrl = $"/api/orders/{orderDate}/{Uri.EscapeDataString(queueMessage.OrderId)}"
                 };
 
                 HttpResponseData response =

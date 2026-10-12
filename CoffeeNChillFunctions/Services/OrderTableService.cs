@@ -89,6 +89,46 @@ namespace CoffeeNChillFunctions.Services
                 cancellationToken);
         }
 
+        public async Task<OrderEntity?> GetOrderAsync(
+            string orderDate,
+            string orderId,
+            CancellationToken cancellationToken = default)
+        {
+            await EnsureTableExistsAsync(cancellationToken);
+
+            await foreach (OrderEntity entity in
+                _tableClient.QueryAsync<OrderEntity>(
+                    order => order.PartitionKey == orderDate &&
+                             order.RowKey == orderId,
+                    cancellationToken: cancellationToken))
+            {
+                return entity;
+            }
+
+            return null;
+        }
+
+        public async Task<List<OrderEntity>> GetOrdersByDateAsync(
+            string orderDate,
+            CancellationToken cancellationToken = default)
+        {
+            await EnsureTableExistsAsync(cancellationToken);
+
+            List<OrderEntity> orders = new();
+
+            await foreach (OrderEntity entity in
+                _tableClient.QueryAsync<OrderEntity>(
+                    order => order.PartitionKey == orderDate,
+                    cancellationToken: cancellationToken))
+            {
+                orders.Add(entity);
+            }
+
+            return orders
+                .OrderByDescending(order => order.OrderTimestamp)
+                .ToList();
+        }
+
         public async Task<List<OrderEntity>> GetAllOrdersAsync(
             CancellationToken cancellationToken = default)
         {
