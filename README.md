@@ -1,6 +1,5 @@
 # CoffeeNChill — Combined CLDV6212 Part 1 and Part 2 Submission
 
-> **Before submission:** replace the student-name and student-number placeholders below with the exact details used by the institution. Update the video link only after the final recording is uploaded. Do not describe an endpoint or service as tested until you have run it and captured evidence.
 
 ## Student and repository
 
