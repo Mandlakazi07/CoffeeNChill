@@ -1,4 +1,4 @@
-# CoffeeNChill — Combined CLDV6212 Part 1 and Part 2 Submission
+[# CoffeeNChill — Combined CLDV6212 Part 1 and Part 2 Submission
 
 
 ## Student and repository
@@ -177,4 +177,4 @@ Use the IIE Harvard Anglia format required by the module and include additional 
 
 ## Code attribution and technical references
 
-External source attribution, IIE Harvard Anglia references and the AI-use disclosure are documented in [docs/CODE_ATTRIBUTION.md](docs/CODE_ATTRIBUTION.md).
+External sourc](https://github.com/Mandlakazi07/CoffeeNChill.git)e attribution, IIE Harvard Anglia references and the AI-use disclosure are documented in [docs/CODE_ATTRIBUTION.md](docs/CODE_ATTRIBUTION.md).
