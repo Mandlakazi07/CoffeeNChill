@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Code Attribution:
  * Title: JWT Authentication and Azure Table Storage
  * Author: Microsoft Learn / Stack Overflow (BCrypt implementation)
@@ -14,7 +14,7 @@ using System.Text;
 using Azure.Data.Tables;
 using CoffeeNChillGateway.Models;
 
-namespace CoffeeNChillGateway.Controllers
+// Handles Login and Registration with BCrypt and JWT`nnamespace CoffeeNChillGateway.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
