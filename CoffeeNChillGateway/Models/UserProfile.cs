@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * Code Attribution:
  * Title: Azure Table Storage Entity
  * Author: Microsoft Learn
@@ -8,7 +8,7 @@
 using Azure;
 using Azure.Data.Tables;
 
-namespace CoffeeNChillGateway.Models
+// Database entity for Azure Table Storage`nnamespace CoffeeNChillGateway.Models
 {
     public class UserProfile : ITableEntity
     {
