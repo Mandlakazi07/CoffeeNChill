@@ -25,7 +25,7 @@ services:
       - coffeenchill-part2-network
 
   functions:
-    image: senandlovu/coffeenchill-functions:part2
+    image: mandlakazi07/coffeenchill-functions:part2
     container_name: coffeenchill-part2-functions
     environment:
       FUNCTIONS_WORKER_RUNTIME: "dotnet-isolated"
