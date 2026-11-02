@@ -30,8 +30,11 @@ Validation failures return `400` with `{ "message": "Order validation failed.", 
 | N3 | Remove `selectedItemSkus`, or send `[]` | 400, errors contain `At least one menu item SKU is required.` | Source |
 | N4 | `"selectedItemSkus": [""]` (or a list with one blank entry) | 400, errors contain `SelectedItemSkus cannot contain empty values.` | **Observed** |
 | N5 | `"totalPrice": 0` or `-5` | 400, errors contain `TotalPrice must be greater than zero.` | Source |
-| N6 | Remove `totalPrice` | Same as N5, because a missing number defaults to 0 | Source |
-| N7 | Send `{}` | 400 with four errors, in this order: `OrderId is required.`, `CustomerName is required.`, `At least one menu item SKU is required.`, `TotalPrice must be greater than zero.` | Source |
+| N6 | Remove `totalPrice` | 400, errors contain `TotalPrice is required.` | Source |
+| N7 | Send `{}` | 400 with four errors, in this order: `OrderId is required.`, `CustomerName is required.`, `At least one menu item SKU is required.`, `TotalPrice is required.` | Source |
+| N7a | `"orderId": "ORD/1"` | 400, errors contain `OrderId cannot contain /, \, #, ? or control characters.` | Source |
+| N7b | `"totalPrice": 12.345` | 400, errors contain `TotalPrice cannot have more than two decimal places.` | Source |
+| N7c | `"orderTimestamp"` a day in the future | 400, errors contain `OrderTimestamp cannot be in the future.` | Source |
 
 N4 happened by accident on 11 October 2026 (`Screenshot 2026-10-12 003229.png`). The response was a 400 in 244 ms with exactly the body shown in [order-queue-api.md](order-queue-api.md). The Postman body uses `{{menuItemId}}` for the SKU, so the most likely cause is that variable being empty because the menu item had not been created yet. That is an inference, as the request body itself is not visible in the screenshot.
 
@@ -42,7 +45,7 @@ These return `400` with `{ "error": "..." }`.
 | ID | What to send | Expected | Evidence |
 |---|---|---|---|
 | N8 | Broken JSON, for example a missing closing brace | 400, `The request body contains invalid JSON.` | Source |
-| N9 | Empty body | 400, `The request body contains invalid JSON.` | Source |
+| N9 | Empty body | 400, `The request body is empty. A JSON order is required.` | Source |
 | N10 | Body is just `null` | 400, `A valid order request is required.` | Source |
 | N11 | Wrong types, for example `"totalPrice": "abc"` or `"orderTimestamp": "not-a-date"` | 400, `The request body contains invalid JSON.` | Source |
 

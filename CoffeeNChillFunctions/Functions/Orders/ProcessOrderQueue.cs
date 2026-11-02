@@ -4,8 +4,8 @@
  * The CoffeeNChill lifecycle and idempotency logic are project-specific adaptations; see docs/CODE_ATTRIBUTION.md for the shared baseline, technical references and AI-use disclosure (EMKNDN, 2026; OpenAI, 2026).
  */
 
-using System.Text.Json;
 using CoffeeNChillFunctions.Models;
+using CoffeeNChillFunctions.Serialization;
 using CoffeeNChillFunctions.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
@@ -40,31 +40,20 @@ namespace CoffeeNChillFunctions.Functions.Orders
 
             try
             {
-                if (string.IsNullOrWhiteSpace(queueMessage))
-                {
-                    throw new InvalidOperationException(
-                        "The queue message was empty.");
-                }
-
-                OrderQueueMessage? order =
-                    JsonSerializer.Deserialize<OrderQueueMessage>(
-                        queueMessage,
-                        new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        });
-
-                if (order == null || string.IsNullOrWhiteSpace(order.OrderId))
-                {
-                    throw new InvalidOperationException(
-                        "The queue message did not contain a valid order ID.");
-                }
+                // The trigger has already removed the Base64 layer; the codec
+                // also accepts Base64 text in case a message was double-encoded,
+                // and rejects any payload missing a key attribute.
+                OrderQueueMessage order =
+                    OrderQueueMessageCodec.Decode(queueMessage);
 
                 orderId = order.OrderId;
 
                 _logger.LogInformation(
-                    "Processing queued order {OrderId}.",
-                    order.OrderId);
+                    "Processing queued order {OrderId} (message {MessageId}, schema v{SchemaVersion}, queued at {QueuedAtUtc:o}).",
+                    order.OrderId,
+                    order.MessageId,
+                    order.SchemaVersion,
+                    order.QueuedAtUtc);
 
                 OrderEntity? existingOrder =
                     await _orderTableService.GetOrderAsync(
