@@ -22,3 +22,6 @@ postman/
 
 Dockerfile*
 docker-compose*.yml
+.env
+**/appsettings.json
+CoffeeNChillGateway/
