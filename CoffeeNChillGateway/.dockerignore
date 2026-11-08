@@ -1,0 +1,16 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+*.user
+
+# appsettings.json is git-ignored because it can hold the JWT key and storage
+# connection string. Keep it out of the image too; the container gets its
+# settings from environment variables set in docker-compose.yml.
+appsettings.json
+
+Properties/launchSettings.json
+*.http
+
+Dockerfile
+.dockerignore
