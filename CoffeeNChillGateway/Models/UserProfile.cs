@@ -8,7 +8,8 @@
 using Azure;
 using Azure.Data.Tables;
 
-// Database entity for Azure Table Storage`nnamespace CoffeeNChillGateway.Models
+// Database entity for Azure Table Storage
+namespace CoffeeNChillGateway.Models
 {
     public class UserProfile : ITableEntity
     {

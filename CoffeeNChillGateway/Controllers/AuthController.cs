@@ -14,7 +14,8 @@ using System.Text;
 using Azure.Data.Tables;
 using CoffeeNChillGateway.Models;
 
-// Handles Login and Registration with BCrypt and JWT`nnamespace CoffeeNChillGateway.Controllers
+// Handles Login and Registration with BCrypt and JWT
+namespace CoffeeNChillGateway.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

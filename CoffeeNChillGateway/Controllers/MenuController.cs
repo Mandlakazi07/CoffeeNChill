@@ -10,7 +10,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// Handles public Menu viewing and Admin/Staff modifications`nnamespace CoffeeNChillGateway.Controllers
+// Handles public Menu viewing and Admin/Staff modifications
+namespace CoffeeNChillGateway.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
