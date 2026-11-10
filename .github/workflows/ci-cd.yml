@@ -78,9 +78,9 @@ jobs:
 
       - name: Start the stack
         run: docker compose up -d
-
-      - name: Wait for the Gateway
-        run: echo "Gateway readiness check skipped for submission."
+        
+        - name: Wait for the Gateway
+        run: |
           for attempt in $(seq 1 30); do
             if curl -fs http://localhost:5000/swagger/v1/swagger.json > /dev/null; then
               echo "Gateway is up after $attempt attempt(s)."
@@ -90,6 +90,8 @@ jobs:
           done
           echo "Gateway did not start within 60 seconds."
           exit 1
+
+  
 
       - name: Run the Postman collection
         run: |
