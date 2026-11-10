@@ -1,122 +1,38 @@
-# CODE ATTRIBUTION (IIE Harvard Anglia). Full reference list: docs/CODE_ATTRIBUTION.md
-#
-# (Docker, n.d.-a)
-#   Title:    Compose file reference
-#   Author:   Docker Inc.
-#   Date:     n.d. (accessed 10 November 2026)
-#   Version:  online documentation, no version number
-#   Link:     https://docs.docker.com/reference/compose-file/
-#   Used for: the services, ports, depends_on and restart settings.
-#
-# (Docker, n.d.-b)
-#   Title:    Define and manage networks in Docker Compose
-#   Author:   Docker Inc.
-#   Date:     n.d. (accessed 10 November 2026)
-#   Version:  online documentation, no version number
-#   Link:     https://docs.docker.com/reference/compose-file/networks/
-#   Used for: the shared bridge network.
-#
-# (Docker, n.d.-c)
-#   Title:    Define and manage volumes in Docker Compose
-#   Author:   Docker Inc.
-#   Date:     n.d. (accessed 10 November 2026)
-#   Version:  online documentation, no version number
-#   Link:     https://docs.docker.com/reference/compose-file/volumes/
-#   Used for: the named Azurite data volume.
-#
-# (Docker, n.d.-e)
-#   Title:    Interpolation
-#   Author:   Docker Inc.
-#   Date:     n.d. (accessed 10 November 2026)
-#   Version:  online documentation, no version number
-#   Link:     https://docs.docker.com/reference/compose-file/interpolation/
-#   Used for: reading settings from .env with ${VAR:-default} and ${VAR:?error}.
-#
-# (Docker, n.d.-f)
-#   Title:    Fragments
-#   Author:   Docker Inc.
-#   Date:     n.d. (accessed 10 November 2026)
-#   Version:  online documentation, no version number
-#   Link:     https://docs.docker.com/reference/compose-file/fragments/
-#   Used for: the x-azurite-connection YAML anchor shared by two services.
-#
-# The services, image names, ports and storage connection are CoffeeNChill project configuration.
-#
-# Part 3 stack: Azurite + Azure Functions (Part 1/2) + the ASP.NET Core API gateway.
-# Settings come from a .env file next to this one (copy .env.example). Images are
-# pulled from Docker Hub; for a local build use docker-compose.build.yml as well
-# (see docs/part3-docker-and-postman.md).
-
-# Azurite's well-known development account. It only works against the emulator
-# and is published by Microsoft, so it is not a secret.
-x-azurite-connection: &azurite-connection "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
-
-services:
+﻿services:
   azurite:
-    # Pinned so every machine (laptops, CI, VPS) runs the version that was tested.
-    # To upgrade, change the number here and let CI check it before it deploys.
-    image: mcr.microsoft.com/azure-storage/azurite:3.37.0
-    container_name: coffeenchill-part2-azurite
-    command: >
-      azurite
-      --skipApiVersionCheck
-      --blobHost 0.0.0.0
-      --queueHost 0.0.0.0
-      --tableHost 0.0.0.0
-      --location /data
-      --debug /data/debug.log
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: coffeenchill-azurite
+    command: azurite --skipApiVersionCheck --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --location /data
     ports:
-      - "127.0.0.1:11000:10000"
-      - "127.0.0.1:11001:10001"
-      - "127.0.0.1:11002:10002"
+      - "12000:10000"
+      - "12001:10001"
+      - "12002:10002"
     volumes:
-      - coffeenchill-part2-azurite-data:/data
-    restart: unless-stopped
-    networks:
-      - coffeenchill-part2-network
+      - azurite-data:/data
 
   functions:
-    image: ${DOCKERHUB_NAMESPACE:-mandlakazi07}/coffeenchill-functions:${FUNCTIONS_TAG:-part2}
-    container_name: coffeenchill-part2-functions
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coffeenchill-functions
     environment:
-      FUNCTIONS_WORKER_RUNTIME: "dotnet-isolated"
-      AzureWebJobsSecretStorageType: "files"
-      AzureWebJobsStorage: *azurite-connection
-    ports:
-      # Localhost only. Clients should go through the gateway.
-      - "127.0.0.1:18080:80"
+      FUNCTIONS_WORKER_RUNTIME: dotnet-isolated
+      AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
     depends_on:
       - azurite
-    restart: unless-stopped
-    networks:
-      - coffeenchill-part2-network
 
   gateway:
-    image: ${DOCKERHUB_NAMESPACE:-mandlakazi07}/coffeenchill-gateway:${GATEWAY_TAG:-part3}
-    container_name: coffeenchill-part3-gateway
+    build:
+      context: ./CoffeeNChillGateway
+      dockerfile: Dockerfile
+    container_name: coffeenchill-gateway
     environment:
-      ASPNETCORE_ENVIRONMENT: "Production"
+      Functions__BaseUrl: "http://functions/api/"
       ASPNETCORE_HTTP_PORTS: "8080"
-      ConnectionStrings__AzureStorage: *azurite-connection
-      # Required. Compose stops with this message if .env does not set it.
-      Jwt__Key: "${JWT_KEY:?Set JWT_KEY in .env (at least 32 characters, see .env.example)}"
-      Jwt__Issuer: "${JWT_ISSUER:-CoffeeNChillGateway}"
-      Jwt__Audience: "${JWT_AUDIENCE:-CoffeeNChillClients}"
-      # Where the gateway reaches the Functions app inside the Compose network.
-      FunctionsApi__BaseUrl: "http://functions:80"
     ports:
-      # Public port for Swagger and the API, e.g. http://<vps-ip>:5000/swagger
-      - "${GATEWAY_PORT:-5000}:8080"
+      - "5118:8080"
     depends_on:
-      - azurite
       - functions
-    restart: unless-stopped
-    networks:
-      - coffeenchill-part2-network
 
 volumes:
-  coffeenchill-part2-azurite-data:
-
-networks:
-  coffeenchill-part2-network:
-    driver: bridge
+  azurite-data:
