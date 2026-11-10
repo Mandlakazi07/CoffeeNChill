@@ -1,0 +1,218 @@
+# CODE ATTRIBUTION (IIE Harvard Anglia)
+# Workflow syntax, job outputs and secrets handling follow GitHub's Actions documentation (GitHub, n.d.).
+# The build, test and deploy steps are CoffeeNChill-specific. See docs/part3-docker-and-postman.md.
+#
+# CI/CD for the Part 3 stack:
+#   1. build-and-test  every push and pull request: compile, build the Docker images,
+#                      start the stack and run the Postman collection with Newman.
+#   2. publish         pushes to main only: push the images to Docker Hub.
+#   3. deploy          pushes to main only: SSH to the VPS, pull the new images, restart.
+# Publish and deploy skip themselves (with a notice) until their secrets are set,
+# so the pipeline stays green while the VPS is still being set up.
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main, part-3]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_NAMESPACE || 'mandlakazi07' }}
+  NEWMAN_VERSION: "6.2.1"
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Compile the gateway
+        run: dotnet build CoffeeNChillGateway/CoffeeNChillGateway.csproj --configuration Release
+
+      - name: Compile the Functions app
+        run: dotnet build CoffeeNChillFunctions/CoffeeNChillFunctions.csproj --configuration Release
+
+      - name: Create a throwaway .env for the test stack
+        run: |
+          cp .env.example .env
+          # Random key for this run only. Never the real VPS key.
+          sed -i "s|^JWT_KEY=.*|JWT_KEY=$(openssl rand -base64 48)|" .env
+
+      - name: Build Docker images
+        run: docker compose -f docker-compose.yml -f docker-compose.build.yml build
+
+      - name: Start the stack
+        run: docker compose up -d
+
+      - name: Wait for the gateway
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fs http://localhost:5000/swagger/v1/swagger.json > /dev/null; then
+              echo "Gateway is up after $attempt attempt(s)."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Gateway did not start within 60 seconds."
+          exit 1
+
+      - name: Run the Postman collection
+        run: |
+          mkdir -p test-results
+          npx --yes newman@${NEWMAN_VERSION} run Postman/CoffeeNChill-Part3-Gateway.postman_collection.json \
+            --environment Postman/CoffeeNChill-Part3.postman_environment.json \
+            --env-var baseUrl=http://localhost:5000 \
+            --reporters cli,junit \
+            --reporter-junit-export test-results/newman.xml
+
+      - name: Show container logs
+        if: failure()
+        run: docker compose logs --tail 200
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-results
+          path: test-results/
+          if-no-files-found: ignore
+
+      - name: Stop the stack
+        if: always()
+        run: docker compose down -v
+
+  publish:
+    name: Push images to Docker Hub
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      published: ${{ steps.secrets.outputs.ready }}
+
+    steps:
+      - name: Check Docker Hub secrets
+        id: secrets
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          if [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::DOCKERHUB_USERNAME / DOCKERHUB_TOKEN are not set, so the images were not pushed."
+          fi
+
+      - name: Check out code
+        if: steps.secrets.outputs.ready == 'true'
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        if: steps.secrets.outputs.ready == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push images
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          # Compose needs a JWT_KEY to read the file, even though building does not use it.
+          cp .env.example .env
+          sed -i "s|^JWT_KEY=.*|JWT_KEY=build-only-placeholder-key-not-used-at-runtime|" .env
+
+          docker compose -f docker-compose.yml -f docker-compose.build.yml build
+          docker compose -f docker-compose.yml -f docker-compose.build.yml push gateway functions
+
+          # Also tag the gateway with the commit, so any deploy can be traced back.
+          short_sha="${GITHUB_SHA::7}"
+          docker tag "${DOCKERHUB_NAMESPACE}/coffeenchill-gateway:part3" "${DOCKERHUB_NAMESPACE}/coffeenchill-gateway:${short_sha}"
+          docker push "${DOCKERHUB_NAMESPACE}/coffeenchill-gateway:${short_sha}"
+
+  deploy:
+    name: Deploy to the VPS
+    needs: publish
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.publish.outputs.published == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: vps-deploy
+      cancel-in-progress: false
+
+    steps:
+      - name: Check VPS secrets
+        id: secrets
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          if [ -n "$VPS_HOST" ] && [ -n "$VPS_USER" ] && [ -n "$VPS_SSH_KEY" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::VPS_HOST / VPS_USER / VPS_SSH_KEY are not set, so nothing was deployed."
+          fi
+
+      - name: Check out code
+        if: steps.secrets.outputs.ready == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up SSH
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts
+
+      - name: Copy docker-compose.yml and restart the stack
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_APP_DIR: ${{ vars.VPS_APP_DIR || 'coffeenchill' }}
+        run: |
+          ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" "mkdir -p $VPS_APP_DIR"
+          scp -i ~/.ssh/deploy_key docker-compose.yml "$VPS_USER@$VPS_HOST:$VPS_APP_DIR/docker-compose.yml"
+          # The VPS keeps its own .env (with the real JWT key); it is never overwritten here.
+          if ! ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" "test -f $VPS_APP_DIR/.env"; then
+            echo "::error::No .env in ~/$VPS_APP_DIR on the VPS. Create it from .env.example (with a real JWT_KEY) before deploying."
+            exit 1
+          fi
+          ssh -i ~/.ssh/deploy_key "$VPS_USER@$VPS_HOST" "cd $VPS_APP_DIR && docker compose pull && docker compose up -d && docker image prune -f"
+
+      - name: Check the live site
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          GATEWAY_PORT: ${{ vars.GATEWAY_PORT || '5000' }}
+        run: |
+          for attempt in $(seq 1 20); do
+            if curl -fs "http://$VPS_HOST:$GATEWAY_PORT/swagger/v1/swagger.json" > /dev/null; then
+              echo "Live gateway responded after $attempt attempt(s)."
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "The live gateway did not respond after deploying."
+          exit 1
