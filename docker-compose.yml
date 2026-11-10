@@ -13,7 +13,9 @@ x-azurite-connection: &azurite-connection "DefaultEndpointsProtocol=http;Account
 
 services:
   azurite:
-    image: mcr.microsoft.com/azure-storage/azurite:latest
+    # Pinned so every machine (laptops, CI, VPS) runs the version that was tested.
+    # To upgrade, change the number here and let CI check it before it deploys.
+    image: mcr.microsoft.com/azure-storage/azurite:3.37.0
     container_name: coffeenchill-part2-azurite
     command: >
       azurite
