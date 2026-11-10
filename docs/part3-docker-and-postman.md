@@ -37,8 +37,8 @@ Only the gateway is published on a public port. Azurite and the Functions app ar
 | `docker-compose.yml` | The whole stack, using images from Docker Hub only. This is the file the VPS uses. |
 | `docker-compose.build.yml` | Override that adds `build:` sections, for building the images from this repo. |
 | `.env.example` | Template for `.env`. Copy it and set `JWT_KEY`. `.env` is git-ignored. |
-| `Postman/CoffeeNChill-Part3-Gateway.postman_collection.json` | Every gateway endpoint, including the Bearer token flows. |
-| `Postman/CoffeeNChill-Part3.postman_environment.json` | `baseUrl` for local Docker, plus a `vpsBaseUrl` placeholder. |
+| `docs/postman/CoffeeNChill-Part3-Gateway.postman_collection.json` | Every gateway endpoint, including the Bearer token flows. |
+| `docs/postman/CoffeeNChill-Part3.postman_environment.json` | `baseUrl` for local Docker, plus a `vpsBaseUrl` placeholder. |
 | `.github/workflows/ci-cd.yml` | Bonus CI/CD pipeline. See the CI/CD section below. |
 
 ## Settings
@@ -150,7 +150,7 @@ After that, every push to `main` that passes the tests is live on the VPS a few 
 
 ## Postman
 
-Import both files from `Postman/`, select the **CoffeeNChill Part 3** environment, and run the collection from the top. For the VPS, set `baseUrl` to the VPS address.
+Import both files from `docs/postman/`, select the **CoffeeNChill Part 3** environment, and run the collection from the top. For the VPS, set `baseUrl` to the VPS address.
 
 | Folder | What it shows |
 |---|---|

@@ -74,8 +74,8 @@ jobs:
       - name: Run the Postman collection
         run: |
           mkdir -p test-results
-          npx --yes newman@${NEWMAN_VERSION} run Postman/CoffeeNChill-Part3-Gateway.postman_collection.json \
-            --environment Postman/CoffeeNChill-Part3.postman_environment.json \
+          npx --yes newman@${NEWMAN_VERSION} run docs/postman/CoffeeNChill-Part3-Gateway.postman_collection.json \
+            --environment docs/postman/CoffeeNChill-Part3.postman_environment.json \
             --env-var baseUrl=http://localhost:5000 \
             --reporters cli,junit \
             --reporter-junit-export test-results/newman.xml
