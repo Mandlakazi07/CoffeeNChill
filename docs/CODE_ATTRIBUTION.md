@@ -22,6 +22,7 @@ Microsoft and Docker documentation below is cited for the technical behaviour of
 - Azure Tables client API: (Microsoft, n.d.-d).
 - Compose services, network and volumes: (Docker, n.d.-a; Docker, n.d.-b; Docker, n.d.-c).
 - Docker multi-stage builds: (Docker, n.d.-d).
+- GitHub Actions workflow syntax, outputs and secrets: (GitHub, n.d.).
 - Shared group-code baseline: (EMKNDN, 2026).
 - Generative-AI assistance: (OpenAI, 2026).
 
@@ -36,6 +37,8 @@ Docker. n.d.-c. *Define and manage volumes in Docker Compose*. [online]. Availab
 Docker. n.d.-d. *Multi-stage builds*. [online]. Available at: https://docs.docker.com/build/building/multi-stage-builds/ [Accessed 12 October 2026].
 
 EMKNDN. 2026. *emkndn-cldv6212-2026-cldv6212-poe-ndlovu-sena* [Source code]. Available at: https://github.com/EMKNDN/emkndn-cldv6212-2026-cldv6212-poe-ndlovu-sena [Accessed 12 October 2026].
+
+GitHub. n.d. *Workflow syntax for GitHub Actions*. [online]. Available at: https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions [Accessed 10 November 2026].
 
 Microsoft. n.d.-a. *Azure Queue storage trigger and bindings for Azure Functions overview*. [online]. Available at: https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue [Accessed 12 October 2026].
 

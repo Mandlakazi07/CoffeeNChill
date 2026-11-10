@@ -39,6 +39,7 @@ Only the gateway is published on a public port. Azurite and the Functions app ar
 | `.env.example` | Template for `.env`. Copy it and set `JWT_KEY`. `.env` is git-ignored. |
 | `Postman/CoffeeNChill-Part3-Gateway.postman_collection.json` | Every gateway endpoint, including the Bearer token flows. |
 | `Postman/CoffeeNChill-Part3.postman_environment.json` | `baseUrl` for local Docker, plus a `vpsBaseUrl` placeholder. |
+| `.github/workflows/ci-cd.yml` | Bonus CI/CD pipeline. See the CI/CD section below. |
 
 ## Settings
 
@@ -111,6 +112,41 @@ docker compose ps
 ```
 
 Open port 5000 (or whatever `GATEWAY_PORT` is) in the VPS firewall. The public URL is then `http://<vps-ip>:5000/swagger`. Use a different `JWT_KEY` on the VPS from the one used locally.
+
+## CI/CD (bonus)
+
+`.github/workflows/ci-cd.yml` runs three jobs:
+
+| Job | Runs on | What it does |
+|---|---|---|
+| Build and test | Every push to `main` or `part-3`, and pull requests into `main` | Compiles both projects, builds both Docker images, starts the full stack with a throwaway JWT key, waits for the gateway, and runs the Postman collection with Newman. The Newman results are saved as a `newman-results` artifact on the run. If anything fails, the container logs are printed. |
+| Push images to Docker Hub | Pushes to `main`, after the tests pass | Builds and pushes `coffeenchill-gateway:part3` and `coffeenchill-functions:part2`, plus a gateway tag for the commit (for example `coffeenchill-gateway:a1b2c3d`). |
+| Deploy to the VPS | Pushes to `main`, after the images are pushed | Copies `docker-compose.yml` to the VPS over SSH, runs `docker compose pull` and `docker compose up -d`, then checks the live Swagger URL responds. |
+
+The publish and deploy jobs **skip themselves with a notice** until their secrets exist. The pipeline stays green while the VPS is being set up, and starts deploying as soon as the secrets are added. Nothing else needs changing.
+
+### Secrets to add
+
+In GitHub, go to **Settings > Secrets and variables > Actions**. This needs admin access to the repository. Never paste these into chat or commit them.
+
+| Secret | Value |
+|---|---|
+| `DOCKERHUB_USERNAME` | The Docker Hub account name (`mandlakazi07`) |
+| `DOCKERHUB_TOKEN` | A Docker Hub access token with read and write access. Create it in Docker Hub under Account settings > Personal access tokens. Do not use the account password. |
+| `VPS_HOST` | The VPS public IP or host name |
+| `VPS_USER` | The Linux user on the VPS that runs Docker |
+| `VPS_SSH_KEY` | The **private** key of a key pair made just for deploys (see below) |
+
+Optional repository **variables** (same page, Variables tab): `DOCKERHUB_NAMESPACE` (default `mandlakazi07`), `VPS_APP_DIR` (default `coffeenchill`, relative to the user's home folder) and `GATEWAY_PORT` (default `5000`).
+
+### One-off VPS preparation (Person 3)
+
+1. Install Docker and Docker Compose, and add the deploy user to the `docker` group so it can run Docker without `sudo`.
+2. Create `~/coffeenchill/.env` from `.env.example` with a real `JWT_KEY` (`openssl rand -base64 48`). The workflow never touches `.env`, and refuses to deploy if it is missing.
+3. Make a deploy key pair on your own machine (`ssh-keygen -t ed25519 -f coffeenchill-deploy -N ""`). Add the `.pub` file to `~/.ssh/authorized_keys` on the VPS, and put the private file's contents into the `VPS_SSH_KEY` secret.
+4. Open the gateway port in the firewall.
+
+After that, every push to `main` that passes the tests is live on the VPS a few minutes later. You can watch it under the repository's **Actions** tab, which is worth showing in the video.
 
 ## Postman
 
