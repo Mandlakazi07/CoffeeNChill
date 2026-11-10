@@ -11,7 +11,7 @@
 # The build, test, publish and deploy steps are CoffeeNChill-specific. See docs/part3-docker-and-postman.md.
 #
 # CI/CD for the Part 3 stack:
-#   1. build-and-test  every push and pull request: compile, build the Docker images,
+#   1. build-and-test  every push and pull request: compile, run unit tests, build the Docker images,
 #                      start the stack and run the Postman collection with Newman.
 #   2. publish         pushes to main only: push the images to Docker Hub.
 #   3. deploy          pushes to main only: SSH to the VPS, pull the new images, restart.
@@ -54,6 +54,18 @@ jobs:
 
       - name: Compile the Functions app
         run: dotnet build CoffeeNChillFunctions/CoffeeNChillFunctions.csproj --configuration Release
+
+      - name: Run unit tests
+        run: |
+          # Runs every *Tests.csproj in the repository (e.g. the gateway security tests).
+          mapfile -t test_projects < <(find . -name '*Tests.csproj' -not -path './.git/*')
+          if [ ${#test_projects[@]} -eq 0 ]; then
+            echo "::warning::No *Tests.csproj found, so no unit tests ran."
+            exit 0
+          fi
+          for project in "${test_projects[@]}"; do
+            dotnet test "$project" --configuration Release --results-directory test-results --logger trx
+          done
 
       - name: Create a throwaway .env for the test stack
         run: |

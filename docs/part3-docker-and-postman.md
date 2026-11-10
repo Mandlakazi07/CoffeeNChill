@@ -119,7 +119,7 @@ Open port 5000 (or whatever `GATEWAY_PORT` is) in the VPS firewall. The public U
 
 | Job | Runs on | What it does |
 |---|---|---|
-| Build and test | Every push to `main` or `part-3`, and pull requests into `main` | Compiles both projects, builds both Docker images, starts the full stack with a throwaway JWT key, waits for the gateway, and runs the Postman collection with Newman. The Newman results are saved as a `newman-results` artifact on the run. If anything fails, the container logs are printed. |
+| Build and test | Every push to `main` or `part-3`, and pull requests into `main` | Compiles both projects, runs any `*Tests.csproj` unit test projects, builds both Docker images, starts the full stack with a throwaway JWT key, waits for the gateway, and runs the Postman collection with Newman. The Newman results are saved as a `newman-results` artifact on the run. If anything fails, the container logs are printed. |
 | Push images to Docker Hub | Pushes to `main`, after the tests pass | Builds and pushes `coffeenchill-gateway:part3` and `coffeenchill-functions:part2`, plus a gateway tag for the commit (for example `coffeenchill-gateway:a1b2c3d`). |
 | Deploy to the VPS | Pushes to `main`, after the images are pushed | Copies `docker-compose.yml` to the VPS over SSH, runs `docker compose pull` and `docker compose up -d`, then checks the live Swagger URL responds. |
 
