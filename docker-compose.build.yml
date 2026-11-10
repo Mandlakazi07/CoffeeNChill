@@ -1,3 +1,13 @@
+# CODE ATTRIBUTION (IIE Harvard Anglia). Full reference list: docs/CODE_ATTRIBUTION.md
+#
+# (Docker, n.d.-g)
+#   Title:    Merge Compose files
+#   Author:   Docker Inc.
+#   Date:     n.d. (accessed 10 November 2026)
+#   Version:  online documentation, no version number
+#   Link:     https://docs.docker.com/reference/compose-file/merge/
+#   Used for: layering build settings over docker-compose.yml with a second -f file.
+#
 # Local build override. docker-compose.yml only references Docker Hub images,
 # which is what the VPS uses. Add this file when you want to build the images
 # from the source in this repository instead:

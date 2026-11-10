@@ -1,6 +1,46 @@
-# CODE ATTRIBUTION (IIE Harvard Anglia)
-# Compose service, network and named-volume concepts follow Docker's documentation (Docker, n.d.-a; Docker, n.d.-b; Docker, n.d.-c).
-# The specific services, image references, ports and storage connection are CoffeeNChill project configuration. See docs/CODE_ATTRIBUTION.md.
+# CODE ATTRIBUTION (IIE Harvard Anglia). Full reference list: docs/CODE_ATTRIBUTION.md
+#
+# (Docker, n.d.-a)
+#   Title:    Compose file reference
+#   Author:   Docker Inc.
+#   Date:     n.d. (accessed 10 November 2026)
+#   Version:  online documentation, no version number
+#   Link:     https://docs.docker.com/reference/compose-file/
+#   Used for: the services, ports, depends_on and restart settings.
+#
+# (Docker, n.d.-b)
+#   Title:    Define and manage networks in Docker Compose
+#   Author:   Docker Inc.
+#   Date:     n.d. (accessed 10 November 2026)
+#   Version:  online documentation, no version number
+#   Link:     https://docs.docker.com/reference/compose-file/networks/
+#   Used for: the shared bridge network.
+#
+# (Docker, n.d.-c)
+#   Title:    Define and manage volumes in Docker Compose
+#   Author:   Docker Inc.
+#   Date:     n.d. (accessed 10 November 2026)
+#   Version:  online documentation, no version number
+#   Link:     https://docs.docker.com/reference/compose-file/volumes/
+#   Used for: the named Azurite data volume.
+#
+# (Docker, n.d.-e)
+#   Title:    Interpolation
+#   Author:   Docker Inc.
+#   Date:     n.d. (accessed 10 November 2026)
+#   Version:  online documentation, no version number
+#   Link:     https://docs.docker.com/reference/compose-file/interpolation/
+#   Used for: reading settings from .env with ${VAR:-default} and ${VAR:?error}.
+#
+# (Docker, n.d.-f)
+#   Title:    Fragments
+#   Author:   Docker Inc.
+#   Date:     n.d. (accessed 10 November 2026)
+#   Version:  online documentation, no version number
+#   Link:     https://docs.docker.com/reference/compose-file/fragments/
+#   Used for: the x-azurite-connection YAML anchor shared by two services.
+#
+# The services, image names, ports and storage connection are CoffeeNChill project configuration.
 #
 # Part 3 stack: Azurite + Azure Functions (Part 1/2) + the ASP.NET Core API gateway.
 # Settings come from a .env file next to this one (copy .env.example). Images are

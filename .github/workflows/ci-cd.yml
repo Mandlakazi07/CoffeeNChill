@@ -1,6 +1,14 @@
-# CODE ATTRIBUTION (IIE Harvard Anglia)
-# Workflow syntax, job outputs and secrets handling follow GitHub's Actions documentation (GitHub, n.d.).
-# The build, test and deploy steps are CoffeeNChill-specific. See docs/part3-docker-and-postman.md.
+# CODE ATTRIBUTION (IIE Harvard Anglia). Full reference list: docs/CODE_ATTRIBUTION.md
+#
+# (GitHub, n.d.)
+#   Title:    Workflow syntax for GitHub Actions
+#   Author:   GitHub, Inc.
+#   Date:     n.d. (accessed 10 November 2026)
+#   Version:  online documentation, no version number
+#   Link:     https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax
+#   Used for: triggers, jobs, needs, job outputs, conditions and secrets.
+#
+# The build, test, publish and deploy steps are CoffeeNChill-specific. See docs/part3-docker-and-postman.md.
 #
 # CI/CD for the Part 3 stack:
 #   1. build-and-test  every push and pull request: compile, build the Docker images,

@@ -21,7 +21,10 @@ Microsoft and Docker documentation below is cited for the technical behaviour of
 - .NET isolated Azure Functions model: (Microsoft, n.d.-c).
 - Azure Tables client API: (Microsoft, n.d.-d).
 - Compose services, network and volumes: (Docker, n.d.-a; Docker, n.d.-b; Docker, n.d.-c).
+- Compose .env interpolation and YAML fragments: (Docker, n.d.-e; Docker, n.d.-f).
+- Compose build override file: (Docker, n.d.-g).
 - Docker multi-stage builds: (Docker, n.d.-d).
+- .NET container port 8080 and non-root app user: (Microsoft, n.d.-e; Microsoft, n.d.-f).
 - GitHub Actions workflow syntax, outputs and secrets: (GitHub, n.d.).
 - Shared group-code baseline: (EMKNDN, 2026).
 - Generative-AI assistance: (OpenAI, 2026).
@@ -34,11 +37,17 @@ Docker. n.d.-b. *Define and manage networks in Docker Compose*. [online]. Availa
 
 Docker. n.d.-c. *Define and manage volumes in Docker Compose*. [online]. Available at: https://docs.docker.com/reference/compose-file/volumes/ [Accessed 12 October 2026].
 
-Docker. n.d.-d. *Multi-stage builds*. [online]. Available at: https://docs.docker.com/build/building/multi-stage-builds/ [Accessed 12 October 2026].
+Docker. n.d.-d. *Multi-stage builds*. [online]. Available at: https://docs.docker.com/build/building/multi-stage/ [Accessed 10 November 2026].
+
+Docker. n.d.-e. *Interpolation*. [online]. Available at: https://docs.docker.com/reference/compose-file/interpolation/ [Accessed 10 November 2026].
+
+Docker. n.d.-f. *Fragments*. [online]. Available at: https://docs.docker.com/reference/compose-file/fragments/ [Accessed 10 November 2026].
+
+Docker. n.d.-g. *Merge Compose files*. [online]. Available at: https://docs.docker.com/reference/compose-file/merge/ [Accessed 10 November 2026].
 
 EMKNDN. 2026. *emkndn-cldv6212-2026-cldv6212-poe-ndlovu-sena* [Source code]. Available at: https://github.com/EMKNDN/emkndn-cldv6212-2026-cldv6212-poe-ndlovu-sena [Accessed 12 October 2026].
 
-GitHub. n.d. *Workflow syntax for GitHub Actions*. [online]. Available at: https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions [Accessed 10 November 2026].
+GitHub. n.d. *Workflow syntax for GitHub Actions*. [online]. Available at: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax [Accessed 10 November 2026].
 
 Microsoft. n.d.-a. *Azure Queue storage trigger and bindings for Azure Functions overview*. [online]. Available at: https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue [Accessed 12 October 2026].
 
@@ -47,6 +56,10 @@ Microsoft. n.d.-b. *Azure Queue storage trigger for Azure Functions*. [online]. 
 Microsoft. n.d.-c. *Guide for running C# Azure Functions in an isolated worker process*. [online]. Available at: https://learn.microsoft.com/en-us/azure/azure-functions/dotnet-isolated-process-guide [Accessed 12 October 2026].
 
 Microsoft. n.d.-d. *TableClient Class (Azure.Data.Tables)*. [online]. Available at: https://learn.microsoft.com/en-us/dotnet/api/azure.data.tables.tableclient?view=azure-dotnet [Accessed 12 October 2026].
+
+Microsoft. n.d.-e. *Breaking change: Default ASP.NET Core port changed from 80 to 8080*. [online]. Available at: https://learn.microsoft.com/en-us/dotnet/core/compatibility/containers/8.0/aspnet-port [Accessed 10 November 2026].
+
+Microsoft. n.d.-f. *Breaking change: New non-root 'app' user in Linux images*. [online]. Available at: https://learn.microsoft.com/en-us/dotnet/core/compatibility/containers/8.0/app-user [Accessed 10 November 2026].
 
 OpenAI. 2026. *ChatGPT (GPT-6)*. [Large language model]. Available at: https://chatgpt.com/ [Accessed: 12 October 2026].
 
