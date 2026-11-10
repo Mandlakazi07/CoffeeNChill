@@ -1,0 +1,1453 @@
+{
+	"info": {
+		"name": "CoffeeNChill Part 3 - API Gateway",
+		"description": "Requests for the Part 3 ASP.NET Core gateway, including the JWT Bearer flows.\n\nRun the folders in order. Folder 00 creates unique test users for the run and folder 01 stores their tokens in collection variables (customerToken, staffToken, adminToken) that later requests use.\n\nPick the CoffeeNChill Part 3 environment and set baseUrl to the local Docker URL or the VPS URL. See docs/part3-docker-and-postman.md.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "noauth"
+	},
+	"variable": [
+		{
+			"key": "runId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "customerEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "staffEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "testPassword",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "customerToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "staffToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminToken",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "00 - Setup and health",
+			"description": "Run first. Creates unique test emails for this run so the collection can be run again without 409 conflicts.",
+			"item": [
+				{
+					"name": "Swagger document is reachable",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/swagger/v1/swagger.json",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"swagger",
+								"v1",
+								"swagger.json"
+							]
+						},
+						"description": "Checks the gateway is up and Swagger/OpenAPI is being served.",
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// New emails every run, so re-running the collection does not hit \"User already exists\".",
+									"const runId = Date.now();",
+									"pm.collectionVariables.set(\"runId\", runId);",
+									"pm.collectionVariables.set(\"customerEmail\", \"customer.\" + runId + \"@coffeenchill.test\");",
+									"pm.collectionVariables.set(\"staffEmail\", \"staff.\" + runId + \"@coffeenchill.test\");",
+									"pm.collectionVariables.set(\"adminEmail\", \"admin.\" + runId + \"@coffeenchill.test\");",
+									"if (!pm.collectionVariables.get(\"testPassword\")) {",
+									"    pm.collectionVariables.set(\"testPassword\", \"Postman!\" + runId);",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"OpenAPI document is for the CoffeeNChill gateway\", function () {",
+									"    pm.expect(pm.response.json().info.title).to.eql(\"CoffeeNChill Gateway\");",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "01 - Auth: register and login",
+			"description": "Registers one user per role, logs each in and stores the tokens used by the rest of the collection.",
+			"item": [
+				{
+					"name": "Register Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Creates a Customer user in the Users table (PartitionKey = Customer, RowKey = email).",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{customerEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"fullName\": \"Postman Customer\",\n  \"role\": \"Customer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Success message is returned\", function () {",
+									"    pm.expect(pm.response.json().message).to.eql(\"User registered successfully.\");",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Register Staff",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Creates a Staff user in the Users table (PartitionKey = Staff, RowKey = email).",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{staffEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"fullName\": \"Postman Staff\",\n  \"role\": \"Staff\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Success message is returned\", function () {",
+									"    pm.expect(pm.response.json().message).to.eql(\"User registered successfully.\");",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Register Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Creates a Admin user in the Users table (PartitionKey = Admin, RowKey = email).",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"fullName\": \"Postman Admin\",\n  \"role\": \"Admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Success message is returned\", function () {",
+									"    pm.expect(pm.response.json().message).to.eql(\"User registered successfully.\");",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login as Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Logs in the customer registered earlier and saves the JWT as {{customerToken}}.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{customerEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const body = pm.response.json();",
+									"",
+									"pm.test(\"Response contains a token\", function () {",
+									"    pm.expect(body.token).to.be.a(\"string\").and.not.be.empty;",
+									"});",
+									"",
+									"pm.test(\"Token has Name, Email and Role claims\", function () {",
+									"    const payload = body.token.split(\".\")[1].replace(/-/g, \"+\").replace(/_/g, \"/\");",
+									"    const claims = JSON.parse(atob(payload));",
+									"    pm.expect(claims.unique_name, \"name claim\").to.be.a(\"string\").and.not.be.empty;",
+									"    pm.expect(claims.email, \"email claim\").to.eql(pm.collectionVariables.get(\"customerEmail\"));",
+									"    pm.expect(claims.role, \"role claim\").to.eql(\"Customer\");",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"customerToken\", body.token);"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login as Staff",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Logs in the staff registered earlier and saves the JWT as {{staffToken}}.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{staffEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const body = pm.response.json();",
+									"",
+									"pm.test(\"Response contains a token\", function () {",
+									"    pm.expect(body.token).to.be.a(\"string\").and.not.be.empty;",
+									"});",
+									"",
+									"pm.test(\"Token has Name, Email and Role claims\", function () {",
+									"    const payload = body.token.split(\".\")[1].replace(/-/g, \"+\").replace(/_/g, \"/\");",
+									"    const claims = JSON.parse(atob(payload));",
+									"    pm.expect(claims.unique_name, \"name claim\").to.be.a(\"string\").and.not.be.empty;",
+									"    pm.expect(claims.email, \"email claim\").to.eql(pm.collectionVariables.get(\"staffEmail\"));",
+									"    pm.expect(claims.role, \"role claim\").to.eql(\"Staff\");",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"staffToken\", body.token);"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login as Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Logs in the admin registered earlier and saves the JWT as {{adminToken}}.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{testPassword}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const body = pm.response.json();",
+									"",
+									"pm.test(\"Response contains a token\", function () {",
+									"    pm.expect(body.token).to.be.a(\"string\").and.not.be.empty;",
+									"});",
+									"",
+									"pm.test(\"Token has Name, Email and Role claims\", function () {",
+									"    const payload = body.token.split(\".\")[1].replace(/-/g, \"+\").replace(/_/g, \"/\");",
+									"    const claims = JSON.parse(atob(payload));",
+									"    pm.expect(claims.unique_name, \"name claim\").to.be.a(\"string\").and.not.be.empty;",
+									"    pm.expect(claims.email, \"email claim\").to.eql(pm.collectionVariables.get(\"adminEmail\"));",
+									"    pm.expect(claims.role, \"role claim\").to.eql(\"Admin\");",
+									"});",
+									"",
+									"pm.collectionVariables.set(\"adminToken\", body.token);"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "02 - Auth: error cases",
+			"description": "Bad registrations and logins. The gateway currently returns these errors as plain text, not JSON.",
+			"item": [
+				{
+					"name": "Register the same email twice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{staffEmail}}\",\n  \"password\": \"{{testPassword}}\",\n  \"fullName\": \"Postman Staff\",\n  \"role\": \"Staff\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 409\", function () {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									"",
+									"pm.test(\"Conflict message is returned\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"User already exists\");",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Register without a password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"missing.password@coffeenchill.test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation message is returned\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Email and password are required\");",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login with the wrong password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"{{staffEmail}}\",\n  \"password\": \"definitely-wrong\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"",
+									"pm.test(\"No token is returned\", function () {",
+									"    pm.expect(pm.response.text()).to.not.include(\"token\");",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Login with an unknown email",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"nobody@coffeenchill.test\",\n  \"password\": \"whatever\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "03 - Menu: public",
+			"description": "No token needed ([AllowAnonymous]).",
+			"item": [
+				{
+					"name": "Get menu (no token)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu"
+							]
+						},
+						"description": "",
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Menu is a non-empty list\", function () {",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\").that.is.not.empty;",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "04 - Menu: Staff and Admin",
+			"description": "Requires a Bearer token with the Staff or Admin role ([Authorize(Roles = \"Admin,Staff\")]).",
+			"item": [
+				{
+					"name": "Add menu item (Staff token)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu"
+							]
+						},
+						"description": "The current gateway expects the body to be a plain JSON string, not an object.",
+						"body": {
+							"mode": "raw",
+							"raw": "\"Flat White\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{staffToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Message names the item and the staff member\", function () {",
+									"    const message = pm.response.json().message;",
+									"    pm.expect(message).to.include(\"Flat White\");",
+									"    pm.expect(message).to.include(\"Postman Staff\");",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update menu item (Admin token)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu",
+								"2"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "\"Large Cappuccino\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Message confirms the update\", function () {",
+									"    pm.expect(pm.response.json().message).to.include(\"Large Cappuccino\");",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Delete menu item (Staff token)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu",
+								"3"
+							]
+						},
+						"description": "",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{staffToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Message confirms the delete\", function () {",
+									"    pm.expect(pm.response.json().message).to.include(\"deleted\");",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "05 - Access control",
+			"description": "Proves the role rules: no token gives 401, the wrong role gives 403.",
+			"item": [
+				{
+					"name": "Add menu item with no token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "\"Should Not Work\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401 (no token)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Add menu item as Customer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "\"Should Not Work\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{customerToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403 (Customer role is not allowed)\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update menu item as Customer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu",
+								"1"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "\"Should Not Work\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{customerToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 403 (Customer role is not allowed)\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Delete menu item with no token",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu",
+								"1"
+							]
+						},
+						"description": "",
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401 (no token)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Delete menu item with a tampered token",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/menu/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"menu",
+								"1"
+							]
+						},
+						"description": "Adds one character to a valid Staff token so the signature no longer matches.",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{staffToken}}x",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 401 (signature check fails)\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "06 - Planned gateway routes (not built yet)",
+			"description": "Routes from the Part 3 brief that the gateway does not have yet. While a route is missing (404/405) its tests are skipped rather than failed. Once the route exists the tests run for real. Paths mirror the Part 2 Functions routes and may need adjusting to whatever the gateway finally uses.",
+			"item": [
+				{
+					"name": "Queue an order (no token)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/orders/queue",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"queue"
+							]
+						},
+						"description": "Brief: [AllowAnonymous] on POST /api/orders/queue.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orderId\": \"ORD-GW-{{runId}}\",\n  \"customerName\": \"Postman Customer\",\n  \"selectedItemSkus\": [\"COFFEE-001\"],\n  \"totalPrice\": 45.00\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 404 || pm.response.code === 405) {",
+									"    pm.test.skip(\"Route not built in the gateway yet (got \" + pm.response.code + \")\", function () {});",
+									"} else {",
+									"    pm.test(\"Status code is 202\", function () {",
+									"        pm.response.to.have.status(202);",
+									"    });",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Get order status (no token)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/orders/ORD-GW-{{runId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"ORD-GW-{{runId}}"
+							]
+						},
+						"description": "Processing is asynchronous, so allow time after queueing before expecting a 200.",
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 404 || pm.response.code === 405) {",
+									"    pm.test.skip(\"Route not built in the gateway yet (got \" + pm.response.code + \")\", function () {});",
+									"} else {",
+									"    pm.test(\"Status code is 200\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update order status (Staff token)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/orders/ORD-GW-{{runId}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"ORD-GW-{{runId}}",
+								"status"
+							]
+						},
+						"description": "Brief: order status updates are Admin/Staff only.",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Ready\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{staffToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 404 || pm.response.code === 405) {",
+									"    pm.test.skip(\"Route not built in the gateway yet (got \" + pm.response.code + \")\", function () {});",
+									"} else {",
+									"    pm.test(\"Status code is 200\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Update order status as Customer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/orders/ORD-GW-{{runId}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"ORD-GW-{{runId}}",
+								"status"
+							]
+						},
+						"description": "",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Ready\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{customerToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 404 || pm.response.code === 405) {",
+									"    pm.test.skip(\"Route not built in the gateway yet (got \" + pm.response.code + \")\", function () {});",
+									"} else {",
+									"    pm.test(\"Status code is 403\", function () {",
+									"        pm.response.to.have.status(403);",
+									"    });",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "List staff documents (Staff token)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents"
+							]
+						},
+						"description": "",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{staffToken}}",
+									"type": "string"
+								}
+							]
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 404 || pm.response.code === 405) {",
+									"    pm.test.skip(\"Route not built in the gateway yet (got \" + pm.response.code + \")\", function () {});",
+									"} else {",
+									"    pm.test(\"Status code is 200\", function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"}"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Upload a document with no token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"upload"
+							]
+						},
+						"description": "Brief: document uploads are Admin/Staff only, so this must be refused. Uploading a real file needs form-data in Postman; add that once the route exists.",
+						"auth": {
+							"type": "noauth"
+						}
+					},
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (pm.response.code === 404 || pm.response.code === 405) {",
+									"    pm.test.skip(\"Route not built in the gateway yet (got \" + pm.response.code + \")\", function () {});",
+									"} else {",
+									"    pm.test(\"Status code is 401\", function () {",
+									"        pm.response.to.have.status(401);",
+									"    });",
+									"}"
+								]
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -21,11 +21,16 @@ Microsoft and Docker documentation below is cited for the technical behaviour of
 - .NET isolated Azure Functions model: (Microsoft, n.d.-c).
 - Azure Tables client API: (Microsoft, n.d.-d).
 - Compose services, network and volumes: (Docker, n.d.-a; Docker, n.d.-b; Docker, n.d.-c).
+- Compose .env interpolation and YAML fragments: (Docker, n.d.-e; Docker, n.d.-f).
+- Compose build override file: (Docker, n.d.-g).
+- VPS setup script (Docker install, docker group, start on boot): (Docker, n.d.-h; Docker, n.d.-i).
 - Docker multi-stage builds: (Docker, n.d.-d).
+- .NET container port 8080 and non-root app user: (Microsoft, n.d.-e; Microsoft, n.d.-f).
+- GitHub Actions workflow syntax, outputs and secrets: (GitHub, n.d.).
 - Shared group-code baseline: (EMKNDN, 2026).
 - Generative-AI assistance: (OpenAI, 2026).
 
-## Reference list â€” IIE Harvard Anglia style
+## Reference list (IIE Harvard Anglia style)
 
 Docker. n.d.-a. *Compose file reference*. [online]. Available at: https://docs.docker.com/reference/compose-file/ [Accessed 12 October 2026].
 
@@ -33,9 +38,21 @@ Docker. n.d.-b. *Define and manage networks in Docker Compose*. [online]. Availa
 
 Docker. n.d.-c. *Define and manage volumes in Docker Compose*. [online]. Available at: https://docs.docker.com/reference/compose-file/volumes/ [Accessed 12 October 2026].
 
-Docker. n.d.-d. *Multi-stage builds*. [online]. Available at: https://docs.docker.com/build/building/multi-stage-builds/ [Accessed 12 October 2026].
+Docker. n.d.-d. *Multi-stage builds*. [online]. Available at: https://docs.docker.com/build/building/multi-stage/ [Accessed 10 November 2026].
+
+Docker. n.d.-e. *Interpolation*. [online]. Available at: https://docs.docker.com/reference/compose-file/interpolation/ [Accessed 10 November 2026].
+
+Docker. n.d.-f. *Fragments*. [online]. Available at: https://docs.docker.com/reference/compose-file/fragments/ [Accessed 10 November 2026].
+
+Docker. n.d.-g. *Merge Compose files*. [online]. Available at: https://docs.docker.com/reference/compose-file/merge/ [Accessed 10 November 2026].
+
+Docker. n.d.-h. *Install Docker Engine on Ubuntu*. [online]. Available at: https://docs.docker.com/engine/install/ubuntu/ [Accessed 10 November 2026].
+
+Docker. n.d.-i. *Linux post-installation steps for Docker Engine*. [online]. Available at: https://docs.docker.com/engine/install/linux-postinstall/ [Accessed 10 November 2026].
 
 EMKNDN. 2026. *emkndn-cldv6212-2026-cldv6212-poe-ndlovu-sena* [Source code]. Available at: https://github.com/EMKNDN/emkndn-cldv6212-2026-cldv6212-poe-ndlovu-sena [Accessed 12 October 2026].
+
+GitHub. n.d. *Workflow syntax for GitHub Actions*. [online]. Available at: https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax [Accessed 10 November 2026].
 
 Microsoft. n.d.-a. *Azure Queue storage trigger and bindings for Azure Functions overview*. [online]. Available at: https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue [Accessed 12 October 2026].
 
@@ -45,18 +62,22 @@ Microsoft. n.d.-c. *Guide for running C# Azure Functions in an isolated worker p
 
 Microsoft. n.d.-d. *TableClient Class (Azure.Data.Tables)*. [online]. Available at: https://learn.microsoft.com/en-us/dotnet/api/azure.data.tables.tableclient?view=azure-dotnet [Accessed 12 October 2026].
 
+Microsoft. n.d.-e. *Breaking change: Default ASP.NET Core port changed from 80 to 8080*. [online]. Available at: https://learn.microsoft.com/en-us/dotnet/core/compatibility/containers/8.0/aspnet-port [Accessed 10 November 2026].
+
+Microsoft. n.d.-f. *Breaking change: New non-root 'app' user in Linux images*. [online]. Available at: https://learn.microsoft.com/en-us/dotnet/core/compatibility/containers/8.0/app-user [Accessed 10 November 2026].
+
 OpenAI. 2026. *ChatGPT (GPT-6)*. [Large language model]. Available at: https://chatgpt.com/ [Accessed: 12 October 2026].
 
 The Independent Institute of Education (The IIE). 2025a. *Guidelines for Responsible AI Use at The IIE*. [PDF]. Available at: https://irp.cdn-website.com/271d35b6/files/uploaded/Guidelines_for_Responsible_AI_Use_at_The_IIE.pdf [Accessed: 12 October 2026].
 
-The Independent Institute of Education (The IIE). 2025b. *IIE Quick Reference Guide 2025: Harvard-Anglia Style Reference Guide â€” Adapted for The IIE*. [PDF]. Available at: https://irp.cdn-website.com/271d35b6/files/uploaded/The_IIE_Harvard_Anglia_Style_Reference_Guide_2025.pdf [Accessed: 12 October 2026].
+The Independent Institute of Education (The IIE). 2025b. *IIE Quick Reference Guide 2025: Harvard-Anglia Style Reference Guide, Adapted for The IIE*. [PDF]. Available at: https://irp.cdn-website.com/271d35b6/files/uploaded/The_IIE_Harvard_Anglia_Style_Reference_Guide_2025.pdf [Accessed: 12 October 2026].
 
 ## Disclosure of AI Usage in my Assessment
 
 - **Assessment sections:** CoffeeNChill Part 2 source review and debugging; queue retry/failure-handling revisions; date-based order-read endpoint drafting; source-attribution comments, references and repository documentation.
 - **AI tool:** ChatGPT (GPT-6) (OpenAI, 2026).
 - **Purpose:** Explaining errors and framework behaviour; suggesting and drafting code/configuration changes; producing PowerShell workflows; helping prepare comments and reference formatting.
-- **Dates used:** 11â€“12 October 2026.
+- **Dates used:** 11 to 12 October 2026.
 - **Human review and responsibility:** The student remains responsible for understanding, reviewing and testing the code, verifying citations and adapting the documentation to the final submitted source. Runtime checks completed to date are recorded in the project history and verification notes; untested behaviour must not be represented as tested.
 - **Conversation evidence:** The IIE guidance asks for a link to the actual AI conversation or accurately labelled screenshots as part of the AI-use annexure. Add a share link to this conversation or include screenshots with the formal assessment materials before submission. This repository file does not create a conversation-specific share URL automatically.
 
