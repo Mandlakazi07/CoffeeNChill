@@ -23,13 +23,16 @@ Microsoft and Docker documentation below is cited for the technical behaviour of
 - Compose services, network and volumes: (Docker, n.d.-a; Docker, n.d.-b; Docker, n.d.-c).
 - Compose .env interpolation and YAML fragments: (Docker, n.d.-e; Docker, n.d.-f).
 - Compose build override file: (Docker, n.d.-g).
+- VPS setup script (Docker install, docker group, start on boot): (Docker, n.d.-h; Docker, n.d.-i).
 - Docker multi-stage builds: (Docker, n.d.-d).
 - .NET container port 8080 and non-root app user: (Microsoft, n.d.-e; Microsoft, n.d.-f).
 - GitHub Actions workflow syntax, outputs and secrets: (GitHub, n.d.).
 - Shared group-code baseline: (EMKNDN, 2026).
-- Generative-AI assistance: (OpenAI, 2026).
+- Generative-AI assistance: (OpenAI, 2026) for Parts 1 and 2; (Anthropic, 2026) for Jarrad Rickson's Part 3 work.
 
-## Reference list â€” IIE Harvard Anglia style
+## Reference list (IIE Harvard Anglia style)
+
+Anthropic. 2026. *Claude (Opus 5.5)*. [Large language model]. Available at: https://www.anthropic.com/claude [Accessed 10 November 2026].
 
 Docker. n.d.-a. *Compose file reference*. [online]. Available at: https://docs.docker.com/reference/compose-file/ [Accessed 12 October 2026].
 
@@ -44,6 +47,10 @@ Docker. n.d.-e. *Interpolation*. [online]. Available at: https://docs.docker.com
 Docker. n.d.-f. *Fragments*. [online]. Available at: https://docs.docker.com/reference/compose-file/fragments/ [Accessed 10 November 2026].
 
 Docker. n.d.-g. *Merge Compose files*. [online]. Available at: https://docs.docker.com/reference/compose-file/merge/ [Accessed 10 November 2026].
+
+Docker. n.d.-h. *Install Docker Engine on Ubuntu*. [online]. Available at: https://docs.docker.com/engine/install/ubuntu/ [Accessed 10 November 2026].
+
+Docker. n.d.-i. *Linux post-installation steps for Docker Engine*. [online]. Available at: https://docs.docker.com/engine/install/linux-postinstall/ [Accessed 10 November 2026].
 
 EMKNDN. 2026. *emkndn-cldv6212-2026-cldv6212-poe-ndlovu-sena* [Source code]. Available at: https://github.com/EMKNDN/emkndn-cldv6212-2026-cldv6212-poe-ndlovu-sena [Accessed 12 October 2026].
 
@@ -65,15 +72,24 @@ OpenAI. 2026. *ChatGPT (GPT-6)*. [Large language model]. Available at: https://c
 
 The Independent Institute of Education (The IIE). 2025a. *Guidelines for Responsible AI Use at The IIE*. [PDF]. Available at: https://irp.cdn-website.com/271d35b6/files/uploaded/Guidelines_for_Responsible_AI_Use_at_The_IIE.pdf [Accessed: 12 October 2026].
 
-The Independent Institute of Education (The IIE). 2025b. *IIE Quick Reference Guide 2025: Harvard-Anglia Style Reference Guide â€” Adapted for The IIE*. [PDF]. Available at: https://irp.cdn-website.com/271d35b6/files/uploaded/The_IIE_Harvard_Anglia_Style_Reference_Guide_2025.pdf [Accessed: 12 October 2026].
+The Independent Institute of Education (The IIE). 2025b. *IIE Quick Reference Guide 2025: Harvard-Anglia Style Reference Guide, Adapted for The IIE*. [PDF]. Available at: https://irp.cdn-website.com/271d35b6/files/uploaded/The_IIE_Harvard_Anglia_Style_Reference_Guide_2025.pdf [Accessed: 12 October 2026].
 
 ## Disclosure of AI Usage in my Assessment
 
 - **Assessment sections:** CoffeeNChill Part 2 source review and debugging; queue retry/failure-handling revisions; date-based order-read endpoint drafting; source-attribution comments, references and repository documentation.
 - **AI tool:** ChatGPT (GPT-6) (OpenAI, 2026).
 - **Purpose:** Explaining errors and framework behaviour; suggesting and drafting code/configuration changes; producing PowerShell workflows; helping prepare comments and reference formatting.
-- **Dates used:** 11â€“12 October 2026.
+- **Dates used:** 11 to 12 October 2026.
 - **Human review and responsibility:** The student remains responsible for understanding, reviewing and testing the code, verifying citations and adapting the documentation to the final submitted source. Runtime checks completed to date are recorded in the project history and verification notes; untested behaviour must not be represented as tested.
 - **Conversation evidence:** The IIE guidance asks for a link to the actual AI conversation or accurately labelled screenshots as part of the AI-use annexure. Add a share link to this conversation or include screenshots with the formal assessment materials before submission. This repository file does not create a conversation-specific share URL automatically.
 
 This repository-level disclosure supports transparency; it does not replace any separate annexure, declaration or format required by the lecturer.
+
+## Part 3 AI use (Jarrad Rickson)
+
+- **AI tool:** Claude (Opus 5.5) (Anthropic, 2026).
+- **Used for:** drafting the gateway Dockerfile, the Docker Compose changes, the Part 3 Postman collection, the GitHub Actions workflow, the VPS setup script, the README and the `docs/` pages, and the gateway security changes handed to Person 1 (DTOs, exception middleware, the Staff/Admin rule and unit tests).
+- **Dates used:** 8 to 10 November 2026.
+- **How it was checked:** the projects build with no warnings, the unit tests pass, the full stack was run and the Postman collection passed against it with 0 failures, the CI pipeline passes on GitHub, and every reference link was opened and its title checked.
+
+Each member's own declaration is in the README.
