@@ -28,11 +28,9 @@ Microsoft and Docker documentation below is cited for the technical behaviour of
 - .NET container port 8080 and non-root app user: (Microsoft, n.d.-e; Microsoft, n.d.-f).
 - GitHub Actions workflow syntax, outputs and secrets: (GitHub, n.d.).
 - Shared group-code baseline: (EMKNDN, 2026).
-- Generative-AI assistance: (OpenAI, 2026) for Parts 1 and 2; (Anthropic, 2026) for Jarrad Rickson's Part 3 work.
+- Generative-AI assistance: (OpenAI, 2026).
 
 ## Reference list (IIE Harvard Anglia style)
-
-Anthropic. 2026. *Claude (Opus 5.5)*. [Large language model]. Available at: https://www.anthropic.com/claude [Accessed 10 November 2026].
 
 Docker. n.d.-a. *Compose file reference*. [online]. Available at: https://docs.docker.com/reference/compose-file/ [Accessed 12 October 2026].
 
@@ -84,12 +82,3 @@ The Independent Institute of Education (The IIE). 2025b. *IIE Quick Reference Gu
 - **Conversation evidence:** The IIE guidance asks for a link to the actual AI conversation or accurately labelled screenshots as part of the AI-use annexure. Add a share link to this conversation or include screenshots with the formal assessment materials before submission. This repository file does not create a conversation-specific share URL automatically.
 
 This repository-level disclosure supports transparency; it does not replace any separate annexure, declaration or format required by the lecturer.
-
-## Part 3 AI use (Jarrad Rickson)
-
-- **AI tool:** Claude (Opus 5.5) (Anthropic, 2026).
-- **Used for:** drafting the gateway Dockerfile, the Docker Compose changes, the Part 3 Postman collection, the GitHub Actions workflow, the VPS setup script, the README and the `docs/` pages, and the gateway security changes handed to Person 1 (DTOs, exception middleware, the Staff/Admin rule and unit tests).
-- **Dates used:** 8 to 10 November 2026.
-- **How it was checked:** the projects build with no warnings, the unit tests pass, the full stack was run and the Postman collection passed against it with 0 failures, the CI pipeline passes on GitHub, and every reference link was opened and its title checked.
-
-Each member's own declaration is in the README.

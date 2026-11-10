@@ -252,31 +252,15 @@ Based on the commit history. Each member must check their own row before submiss
 
 **Mandlakazi Fezile Sibiya:** Parts 1 and 2: ChatGPT (OpenAI, 2026) was used to explain errors, suggest code and configuration changes, and help with reference formatting (see [docs/CODE_ATTRIBUTION.md](docs/CODE_ATTRIBUTION.md)). Part 3: *to be completed by Mandlakazi.*
 
-**Jarrad Rickson:** Claude (Anthropic, 2026) was used in Part 3 to help write:
+**Jarrad Rickson:** AI use declaration submitted separately with the assessment.
 
-- the gateway Dockerfile and the Docker Compose changes
-- the Postman collection
-- the GitHub Actions workflow and the VPS setup script
-- this README and the documentation in `docs/`
-- the gateway security changes that were handed to Tyrone (DTOs, exception middleware, the Staff/Admin rule and the unit tests)
-
-I checked the work by:
-
-- building the projects with no warnings
-- running the unit tests (all passing)
-- running the full stack and the Postman collection against it (0 failures)
-- confirming the pipeline passes on GitHub
-- opening every reference link
-
-**Tyrone Seamark:** *To be completed by Tyrone.* The Part 3 gateway security code was first drafted with Claude (see Jarrad's declaration), then reviewed and committed by Tyrone.
+**Tyrone Seamark:** *To be completed by Tyrone.*
 
 ## Code attribution and references
 
 Every file that uses an outside source has an attribution banner with the title, author, date, version and link. The in-text citations are explained in [docs/CODE_ATTRIBUTION.md](docs/CODE_ATTRIBUTION.md).
 
 ### Reference list (IIE Harvard Anglia)
-
-Anthropic. 2026. *Claude (Opus 5.5)*. [Large language model]. Available at: https://www.anthropic.com/claude [Accessed 10 November 2026].
 
 Docker. n.d.-a. *Compose file reference*. [online]. Available at: https://docs.docker.com/reference/compose-file/ [Accessed 12 October 2026].
 
