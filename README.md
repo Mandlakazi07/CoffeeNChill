@@ -252,7 +252,7 @@ Based on the commit history. Each member must check their own row before submiss
 
 **Mandlakazi Fezile Sibiya:** Parts 1 and 2: ChatGPT (OpenAI, 2026) was used to explain errors, suggest code and configuration changes, and help with reference formatting (see [docs/CODE_ATTRIBUTION.md](docs/CODE_ATTRIBUTION.md)). Part 3: *to be completed by Mandlakazi.*
 
-**Jarrad Rickson:** AI use declaration submitted separately with the assessment.
+**Jarrad Rickson:** AI used to understand questions in assignment and outline which roles each user was to take. Ai was used to draft readMe.md
 
 **Tyrone Seamark:** *To be completed by Tyrone.*
 
